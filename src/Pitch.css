@@ -1,0 +1,83 @@
+.loader-slider {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+}
+
+.slider {
+  overflow: hidden;
+  background-color: white;
+  margin: 0 15px;
+  height: 80px;
+  width: 20px;
+  border-radius: 30px;
+  box-shadow: 15px 15px 20px rgba(0, 0, 0, 0.1), -15px -15px 30px #fff,
+    inset -5px -5px 10px rgba(0, 0, 255, 0.1),
+    inset 5px 5px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 80px;
+  width: 20px;
+  border-radius: 20%;
+
+  background: hsl(186 91% 36%);
+  box-shadow: 0 0 0px hsl(186 91% 36%);
+
+  animation: animate_2 2.5s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -0.5s);
+}
+
+.slider:nth-child(even)::before {
+  background: hsl(24 95% 60%);
+  box-shadow: 0 0 10px #fa8638;
+}
+
+@keyframes animate_2 {
+  0% {
+    transform: translateY(250px);
+  }
+  50% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(250px);
+  }
+}
+
+
+.selector {
+  /* Syntax: scrollbar-color: thumb-color track-color; */
+  scrollbar-color: linear-gradient(to right, #fa8638 #089faf); /* Orange thumb, light gray track */
+  /* scrollbar-width: thin; Optional: sets width to "auto" or "thin" */
+}
+
+/* For the entire scrollbar area */
+.selector::-webkit-scrollbar {
+  width: 12px; /* controls the width of the vertical scrollbar */
+}
+
+/* For the scrollbar track (background) */
+.selector::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px; /* Optional: adds rounded corners */
+}
+
+/* For the scrollbar thumb (draggable handle) */
+.selector::-webkit-scrollbar-thumb {
+  background-color: #ff4500;
+  border-radius: 10px; /* Optional: adds rounded corners */
+}
+
+/* Optional: style on hover */
+.selector::-webkit-scrollbar-thumb:hover {
+  background: #e04000;
+}

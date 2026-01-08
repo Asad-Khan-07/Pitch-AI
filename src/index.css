@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* @import "tailwindcss" */
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 30 25% 98%;
+    --foreground: 210 15% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 15% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 15% 15%;
+
+    --primary: 186 91% 36%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 24 95% 60%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 30 20% 95%;
+    --muted-foreground: 210 10% 45%;
+
+    --accent: 186 85% 92%;
+    --accent-foreground: 186 91% 25%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 30 15% 88%;
+    --input: 30 15% 88%;
+    --ring: 186 91% 36%;
+
+    --radius: 0.75rem;
+
+    --gradient-primary: linear-gradient(135deg, hsl(186, 91%, 36%), hsl(186, 85%, 45%));
+    --gradient-secondary: linear-gradient(135deg, hsl(24, 95%, 60%), hsl(24, 95%, 70%));
+    --gradient-warm: linear-gradient(180deg, hsl(30, 25%, 98%), hsl(30, 20%, 96%));
+
+    --shadow-soft: 0 4px 20px -2px hsl(186 91% 36% / 0.08);
+    --shadow-medium: 0 8px 30px -4px hsl(186 91% 36% / 0.12);
+
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dark {
+    --background: 210 20% 12%;
+    --foreground: 30 20% 95%;
+
+    --card: 210 18% 16%;
+    --card-foreground: 30 20% 95%;
+
+    --popover: 210 18% 16%;
+    --popover-foreground: 30 20% 95%;
+
+    --primary: 186 85% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 24 95% 65%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 210 15% 20%;
+    --muted-foreground: 30 15% 65%;
+
+    --accent: 186 70% 25%;
+    --accent-foreground: 186 85% 92%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 15% 22%;
+    --input: 210 15% 22%;
+    --ring: 186 85% 45%;
+
+    --shadow-soft: 0 4px 20px -2px hsl(186 85% 45% / 0.15);
+    --shadow-medium: 0 8px 30px -4px hsl(186 85% 45% / 0.20);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

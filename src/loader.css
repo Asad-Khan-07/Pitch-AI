@@ -1,0 +1,93 @@
+
+.loader {
+  color: #089faf;
+  width: 6px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  margin-left: 15px; 
+  animation:
+    l37-1 .75s infinite linear alternate,
+    l37-2 1.5s  infinite linear; 
+}
+
+
+
+
+.icon-load{
+  color: #089faf;
+  /* width: 6px; */
+  aspect-ratio: 1;
+  animation:sparkles-rotatex 1.5s ease-in-out infinite
+}
+
+.icon-load:hover{
+    
+}
+
+@keyframes sparkles-rotatex { 0%{ transform: rotateX(0deg) } 100%{ transform: rotateX(360deg) }}
+@keyframes sparkles-rotatey { 0%{ transform: rotateY(0deg) } 100%{ transform: rotateY(360deg) }}
+
+
+@keyframes l37-1 {
+  0%,
+  20% {box-shadow:30px 0 0 3px, 10px 0 0 3px, -10px 0 0 3px,-30px 0 0 3px}
+  60%,
+  100% {box-shadow:12px 0 0 3px, 14px 0 0 6px, -14px 0 0 6px,-12px 0 0 3px}
+}
+
+@keyframes l37-2 {
+  0%,25%   {transform: rotate(0)}
+  50%,100% {transform: rotate(.5turn)}
+}
+
+@keyframes animate-intro {
+  0%,25%   {transform: translateY(2)}
+  50%,100% {transform: translateY(3)}
+}
+
+
+.intro {
+  width: 40vw;
+  height: 22px;
+  border-radius: 20px;
+  color: #089faf;
+  border: 2px solid #089faf;
+  position: relative;
+}
+.intro::before {
+  content: "";
+  position: absolute;
+  margin: 2px;
+  inset: 0 100% 0 0;
+  border-radius: inherit;
+  background: currentColor;
+  animation: l6 2s ;
+}
+@keyframes l6 {
+    100% {inset:0}
+}
+
+
+
+
+
+
+
+
+
+.download-loader {
+  width: 30px;
+  padding: 8px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #ffff;
+  --_m: 
+    conic-gradient(#0000 10%,#000),
+    linear-gradient(#000 0 0) content-box;
+  -webkit-mask: var(--_m);
+          mask: var(--_m);
+  -webkit-mask-composite: source-out;
+          mask-composite: subtract;
+  animation: l3 1s infinite linear;
+}
+@keyframes l3 {to{transform: rotate(1turn)}}
