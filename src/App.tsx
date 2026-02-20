@@ -7,13 +7,12 @@ import ImageGenerator from "./pages/ImageGenerator";
 import History from "./pages/History";
 import NotFound from "./pages/NotFound";
 
-import { lazy, Suspense, useContext, useEffect, useState } from "react";
+import { lazy, Suspense, useContext, useState } from "react";
 import { UserContext } from "./authcontext";
 import { ToastContainer } from "react-toastify";
 import { Sparkles } from "lucide-react";
 import Generated from "./pages/Generated";
 import Chat from "./pages/Chat";
-import supabase from "./supabasecreate";
 
 const App = () => {
   const username = JSON.parse(localStorage.getItem("username"));
@@ -25,20 +24,6 @@ const App = () => {
       setTimeout(() => resolve(import("./pages/History")), 2000);
     });
   });
-
-
-  useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "SIGNED_IN" && session) {
-        window.location.replace("/history");
-      }
-    });
-  
-    return () => subscription.unsubscribe();
-  }, []);
-
   return (
     <UserContext.Provider value={{ user, setUser }}>
      <ToastContainer/>
