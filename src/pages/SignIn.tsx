@@ -36,7 +36,8 @@ const onSubmit = (data: LoginForm) => {
 
 
 
-
+// http://localhost:3000
+// https://pitch-ai-eta.vercel.app
 
 
   const signInWithGoogle = async () => {
