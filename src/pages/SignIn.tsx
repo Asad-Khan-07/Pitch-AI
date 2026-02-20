@@ -44,7 +44,7 @@ const onSubmit = (data: LoginForm) => {
       const { error, data } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `https://pitch-ai-eta.vercel.app/history`, 
+        redirectTo: `${window.location.origin}/history`, 
       },
     });
 
