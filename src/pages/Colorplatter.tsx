@@ -7,25 +7,25 @@ export default function GenerateColor() {
   const [history, setHistory] = useState([]);
   const [savedColors, setSavedColors] = useState([]);
 
-  // Generate random hex color
+
   const randomHex = () =>
     `#${Math.floor(Math.random() * 16777215)
       .toString(16)
       .padStart(6, "0")}`;
 
-  // Generate 5 random colors as a group
+
   const generateRandomColor = () => {
     const newGroup = Array.from({ length: 5 }, randomHex);
     setHistory((prev) => [newGroup, ...prev]);
   };
 
-  // Copy color to clipboard
+
   const copyToClipboard = (color: string) => {
     navigator.clipboard.writeText(color);
 
   };
 
-  // Save color group to Supabase
+
   const saveColors = async (group: string) => {
     try {
       const user = await supabase.auth.getUser();
@@ -182,10 +182,10 @@ export default function GenerateColor() {
                       year: "numeric",
                     })}
                   </span>
-                  <Save
+                  {/* <Save
                     className="cursor-pointer text-[#089fafe6]"
                     onClick={() => saveColors(group)}
-                  />
+                  /> */}
                 </div>
               </div>
             ))}
