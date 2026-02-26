@@ -3,145 +3,123 @@ import { Sparkles } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import supabase from "@/supabasecreate";
 import { UserContext } from "@/authcontext";
-import {toast} from "react-toastify"
+import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 
 const SignIn = () => {
-
-
-
-
-
   const [loader, setLoader] = useState(false);
-  const navigate=useNavigate()
-  const {user, setUser}=useContext(UserContext)
+  const navigate = useNavigate();
+  const { user, setUser } = useContext(UserContext);
 
-
-type LoginForm = {
-  email: string;
-  password: string;
-};
-
-
+  type LoginForm = {
+    email: string;
+    password: string;
+  };
 
   const {
-  register,
-  handleSubmit,
-  formState: { errors },
-} = useForm<LoginForm>();
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginForm>();
 
-const onSubmit = (data: LoginForm) => {
-  handleSignin(data.email, data.password);
-};
+  const onSubmit = (data: LoginForm) => {
+    handleSignin(data.email, data.password);
+  };
 
-
-
-// http://localhost:3000
-// https://pitch-ai-eta.vercel.app
-
-
-  const signInWithGoogle = async () => {
-    try{
-      const { error, data } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-         redirectTo: `${window.location.origin}/history`, 
-      },
+  // ✅ Google OAuth ke baad session pakadne ke liye listener
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session) {
+        localStorage.setItem("username", JSON.stringify(true));
+        setUser(true);
+        navigate("/history");
+      }
     });
 
-    if (error) {
-      alert(error.message);
-    }else{
-      console.log(data);
-      
-      localStorage.setItem("username", JSON.stringify(true));
-const username = JSON.parse(localStorage.getItem("username"));
+    return () => subscription.unsubscribe();
+  }, []);
 
-
-      setUser(JSON.parse(localStorage.getItem("username")))
-    }}catch(error){
-        alert(error.message)
-    }
-  }
-
-
-  const handleSignin = async (email:string,password:string) => {
+  const signInWithGoogle = async () => {
     try {
-      setLoader(true)
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-     const res = await supabase.auth.getUser(); 
-
-    if (error){
-
-      setLoader(false)
-       toast.error(error.message, {
-        position: "bottom-right",
-    icon: (
-    <span
-      style={{
-        background: "linear-gradient(to right, #fa8638, #089faf)",
-        WebkitBackgroundClip: "text",
-        color: "#ffffff",
-        fontSize: "1.3rem",
-        fontWeight: "bold",
-      }}
-    >
-      X
-    </span>
-  ),
-  style: {
-    background: "linear-gradient(to right, #fa8638, #089faf)",
-    color: "#ffffff",
-    borderRadius: "0.75rem",
-    fontWeight: "500",
-    boxShadow: "0 0 15px rgba(16,185,129,0.3)",
-  },
-
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/history`,
+        },
       });
-    }else {
-      setLoader(false)
-localStorage.setItem("username", JSON.stringify(true));
-const username = JSON.parse(localStorage.getItem("username"));
-
-
-      setUser(JSON.parse(localStorage.getItem("username")))
- 
-
-      const sessionId = Date.now().toString();
-  localStorage.setItem("chat_session", sessionId);
-         
-      navigate("/history")
-toast.success("Login Succesfuly!", {
-  position: "bottom-right",
-  icon: (
-    <span
-      style={{
-        background: "linear-gradient(to right, #fa8638, #089faf)",
-        WebkitBackgroundClip: "text",
-        color: "#ffffff",
-        fontSize: "1.3rem",
-        fontWeight: "bold",
-      }}
-    >
-      ✔
-    </span>
-  ),
-  style: {
-    background: "linear-gradient(to right, #fa8638, #089faf)",
-    color: "#ffffff",
-    borderRadius: "0.75rem",
-    fontWeight: "500",
-    boxShadow: "0 0 15px rgba(16,185,129,0.3)",
-  },
-
-});
-
-
+  
+      if (error) {
+        toast.error(error.message);
+      }
+    } catch (error: any) {
+      toast.error(error.message);
     }
-    } catch (error) {
-      setLoader(false)
-      // alert(error.message)
-         toast.error(error.message, {
+  };  const handleSignin = async (email: string, password: string) => {
+    try {
+      setLoader(true);
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        setLoader(false);
+        toast.error(error.message, {
+          position: "bottom-right",
+          icon: (
+            <span
+              style={{
+                background: "linear-gradient(to right, #fa8638, #089faf)",
+                WebkitBackgroundClip: "text",
+                color: "#ffffff",
+                fontSize: "1.3rem",
+                fontWeight: "bold",
+              }}
+            >
+              X
+            </span>
+          ),
+          style: {
+            background: "linear-gradient(to right, #fa8638, #089faf)",
+            color: "#ffffff",
+            borderRadius: "0.75rem",
+            fontWeight: "500",
+            boxShadow: "0 0 15px rgba(16,185,129,0.3)",
+          },
+        });
+      } else {
+        setLoader(false);
+        localStorage.setItem("username", JSON.stringify(true));
+        setUser(JSON.parse(localStorage.getItem("username")!));
+
+        const sessionId = Date.now().toString();
+        localStorage.setItem("chat_session", sessionId);
+
+        navigate("/history");
+        toast.success("Login Succesfuly!", {
+          position: "bottom-right",
+          icon: (
+            <span
+              style={{
+                background: "linear-gradient(to right, #fa8638, #089faf)",
+                WebkitBackgroundClip: "text",
+                color: "#ffffff",
+                fontSize: "1.3rem",
+                fontWeight: "bold",
+              }}
+            >
+              ✔
+            </span>
+          ),
+          style: {
+            background: "linear-gradient(to right, #fa8638, #089faf)",
+            color: "#ffffff",
+            borderRadius: "0.75rem",
+            fontWeight: "500",
+            boxShadow: "0 0 15px rgba(16,185,129,0.3)",
+          },
+        });
+      }
+    } catch (error: any) {
+      setLoader(false);
+      toast.error(error.message, {
         position: "bottom-right",
         style: {
           background: "rgba(255,255,255,0.1)",
@@ -152,10 +130,6 @@ toast.success("Login Succesfuly!", {
       });
     }
   };
-
-
-
-
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-background via-accent to-background">
@@ -173,62 +147,52 @@ toast.success("Login Succesfuly!", {
           <p className="text-muted-foreground">Sign in to continue creating winning pitches</p>
         </div>
 
-       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground">Email</label>
+            <input
+              type="email"
+              placeholder="you@company.com"
+              className="w-full h-11 px-3 py-2 rounded-md border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+              {...register("email", {
+                required: "Email is required",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Invalid email format",
+                },
+              })}
+            />
+            {errors.email && (
+              <p className="text-sm text-red-500">{errors.email.message}</p>
+            )}
+          </div>
 
+          <div className="space-y-2">
+            <input
+              type="password"
+              placeholder="••••••••"
+              className="w-full h-11 px-3 py-2 rounded-md border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+              {...register("password", {
+                required: "Password is required",
+                minLength: {
+                  value: 6,
+                  message: "Password must be at least 6 characters",
+                },
+              })}
+            />
+            {errors.password && (
+              <p className="text-sm text-red-500">{errors.password.message}</p>
+            )}
+          </div>
 
-  <div className="space-y-2">
-    <label className="text-sm font-medium text-foreground">Email</label>
-    <input
-      type="email"
-      placeholder="you@company.com"
-      className="w-full h-11 px-3 py-2 rounded-md border border-input bg-background
-      focus:outline-none focus:ring-2 focus:ring-ring"
-      {...register("email", {
-        required: "Email is required",
-        pattern: {
-          value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-          message: "Invalid email format",
-        },
-      })}
-    />
-    {errors.email && (
-      <p className="text-sm text-red-500">{errors.email.message}</p>
-    )}
-  </div>
-
-
-  <div className="space-y-2">
-    <input
-      type="password"
-      placeholder="••••••••"
-      className="w-full h-11 px-3 py-2 rounded-md border border-input bg-background
-      focus:outline-none focus:ring-2 focus:ring-ring"
-      {...register("password", {
-        required: "Password is required",
-        minLength: {
-          value: 6,
-          message: "Password must be at least 6 characters",
-        },
-      })}
-    />
-    {errors.password && (
-      <p className="text-sm text-red-500">{errors.password.message}</p>
-    )}
-  </div>
-
-  <button
-    type="submit"
-    className="w-full h-11 rounded-md bg-gradient-to-r from-primary to-primary/90
-    text-primary-foreground font-medium hover:opacity-90 flex justify-center items-center"
-  >
-  {loader ?
-
-   <div className="download-loader"></div>:""
-  } 
-    Sign In
-  </button>
-
-</form>
+          <button
+            type="submit"
+            className="w-full h-11 rounded-md bg-gradient-to-r from-primary to-primary/90 text-primary-foreground font-medium hover:opacity-90 flex justify-center items-center"
+          >
+            {loader ? <div className="download-loader"></div> : ""}
+            Sign In
+          </button>
+        </form>
 
         <div className="mt-6 text-center text-sm">
           <span className="text-muted-foreground">Don't have an account? </span>
@@ -247,7 +211,10 @@ toast.success("Login Succesfuly!", {
         </div>
 
         <div className="mt-6 grid grid-cols-1 gap-3">
-          <button onClick={signInWithGoogle} className="h-11 px-4 py-2 rounded-md border border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground transition-colors inline-flex items-center justify-center font-medium">
+          <button
+            onClick={signInWithGoogle}
+            className="h-11 px-4 py-2 rounded-md border border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground transition-colors inline-flex items-center justify-center font-medium"
+          >
             <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
               <path
                 fill="currentColor"
