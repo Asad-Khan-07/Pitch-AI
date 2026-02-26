@@ -1,10 +1,89 @@
 import { useEffect, useRef, useState } from "react";
-import { Calendar, Download, Send, Sparkles, User, Wand2 } from "lucide-react";
+import { Calendar, Download, Send, Sparkles, User, Wand2, ChevronDown, Monitor, ShoppingCart, Banknote, BookOpen, HeartPulse, UtensilsCrossed, Lightbulb, Rocket, TrendingUp, Building2, Zap, BarChart2, ClipboardList } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import axios from "axios";
 import supabase from "@/supabasecreate";
 import { Navigate, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+
+// ✅ Custom Select Component
+const CustomSelect = ({ value, onChange, options, placeholder }: {
+  value: string;
+  onChange: (val: string) => void;
+  options: { value: string; label: string; icon?: React.ReactNode }[];
+  placeholder: string;
+}) => {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const selected = options.find((o) => o.value === value);
+
+  return (
+    <div ref={ref} className="relative w-full">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="w-full h-10 px-3 rounded-md border border-input bg-background text-foreground 
+                   flex items-center justify-between gap-2 
+                   hover:border-primary/60 hover:bg-accent/50
+                   focus:outline-none focus:ring-2 focus:ring-ring 
+                   transition-all duration-200"
+      >
+        <span className={`flex items-center gap-2 ${selected ? "text-foreground text-sm" : "text-muted-foreground text-sm"}`}>
+          {selected?.icon && (
+            <span className="text-primary">{selected.icon}</span>
+          )}
+          {selected ? selected.label : placeholder}
+        </span>
+        <ChevronDown
+          className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {open && (
+        <div className="absolute z-50 mt-1 w-full rounded-md border border-border bg-card shadow-lg overflow-hidden animate-in fade-in-0 zoom-in-95">
+          {options.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => {
+                onChange(opt.value);
+                setOpen(false);
+              }}
+              className={`w-full px-3 py-2 text-sm text-left flex items-center gap-2
+                         hover:bg-accent hover:text-accent-foreground transition-colors duration-150
+                         ${value === opt.value
+                           ? "bg-gradient-to-r from-primary/10 to-secondary/10 text-primary font-medium"
+                           : "text-foreground"
+                         }`}
+            >
+              {opt.icon && (
+                <span className={value === opt.value ? "text-primary" : "text-muted-foreground"}>
+                  {opt.icon}
+                </span>
+              )}
+              {opt.label}
+              {value === opt.value && (
+                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-gradient-to-r from-primary to-secondary inline-block" />
+              )}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const Chat = () => {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
@@ -21,13 +100,13 @@ const Chat = () => {
 
   const bottom = useRef(null);
   const navigate = useNavigate();
+
   useEffect(() => {
     bottom.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   const sent = async () => {
     if (!input.trim()) return;
-
     setLoader(true);
 
     try {
@@ -98,7 +177,6 @@ Future Vision:
     } catch (error) {
       toast.success(`${error} error to sent`, {
         position: "bottom-right",
-
         style: {
           background: "linear-gradient(to right, #fa8638, #089faf)",
           color: "#ffffff",
@@ -107,7 +185,6 @@ Future Vision:
           boxShadow: "0 0 15px rgba(16,185,129,0.3)",
         },
       });
-    } finally {
     }
   };
 
@@ -116,15 +193,12 @@ Future Vision:
       isFirstRender.current = false;
       return;
     }
-
     fetchMessages();
   }, [refresh]);
 
   const fetchMessages = async () => {
     const user = await supabase.auth.getUser();
-    console.log(user);
     const { data, error } = await supabase
-
       .from("Model")
       .select("*")
       .eq("User", user.data.user.email)
@@ -132,9 +206,8 @@ Future Vision:
       .order("Time", { ascending: false });
 
     if (!error) {
-      console.log(data[0]);
       const formattedPitch = data[0].Generated_Pitch.split("\n").map(
-        (line, index) => {
+        (line: string, index: number) => {
           if (line.endsWith(":")) {
             return (
               <h3 key={index} className="font-semibold mt-4 text-start">
@@ -149,19 +222,17 @@ Future Vision:
           );
         }
       );
-
       setLoader(false);
       setPitch(formattedPitch);
     }
   };
 
-  const isValidInput = (text) => {
+  const isValidInput = (text: string) => {
     const trimmed = text.trim();
     if (trimmed.length < 5) return false;
     if (trimmed.split(" ").length < 1) return false;
     const letterCount = (trimmed.match(/[a-zA-Z]/g) || []).length;
     if (letterCount < 2) return false;
-
     return true;
   };
 
@@ -176,69 +247,82 @@ Future Vision:
               AI Pitch Assistant
             </h1>
           </div>
+
           <div className="grid h-[700px] md:h-[500px] grid-cols-1 md:grid-cols-2 gap-5 justify-between">
-            <div className="h-[400px]  flex flex-col rounded-lg border border-border bg-card ">
+            {/* ✅ Left Panel - Input */}
+            <div className="h-[400px] flex flex-col rounded-lg border border-border bg-card">
               <div className="p-4 border-t border-border">
-                <div className="grid grid-cols-1 gap-5 ">
-                  <div>
-                    <input
-                      onChange={(e) => setInput(e.target.value)}
-                      placeholder="Describe your business idea..."
-                      className="flex-1 h-12 px-3 py-2 rounded-md border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                    />
-                  </div>
+                <div className="grid grid-cols-1 gap-3">
 
-                  <select
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="w-full h-10 rounded-md border px-3"
-                  >
-                    <option value="Select Category">Select Category</option>
-                    <option value="SaaS">SaaS</option>
-                    <option value="E-commerce">E-commerce</option>
-                    <option value="FinTech">FinTech</option>
-                    <option value="EdTech">EdTech</option>
-                    <option value="HealthTech">HealthTech</option>
-                    <option value="Food">Food</option>
-                  </select>
+                  {/* Input */}
+                  <input
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Describe your business idea..."
+                    className="flex-1 h-12 px-3 py-2 rounded-md border border-input bg-background 
+                               text-foreground placeholder:text-muted-foreground 
+                               focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2
+                               hover:border-primary/60 transition-all duration-200"
+                  />
 
-                  <select
+                  {/* ✅ Category Dropdown */}
+                  <CustomSelect
+                    value={category}
+                    onChange={setCategory}
+                    placeholder="Select Category"
+                    options={[
+                      { value: "SaaS", label: "SaaS", icon: <Monitor size={15} /> },
+                      { value: "E-commerce", label: "E-commerce", icon: <ShoppingCart size={15} /> },
+                      { value: "FinTech", label: "FinTech", icon: <Banknote size={15} /> },
+                      { value: "EdTech", label: "EdTech", icon: <BookOpen size={15} /> },
+                      { value: "HealthTech", label: "HealthTech", icon: <HeartPulse size={15} /> },
+                      { value: "Food", label: "Food", icon: <UtensilsCrossed size={15} /> },
+                    ]}
+                  />
+
+                  {/* ✅ Stage Dropdown */}
+                  <CustomSelect
                     value={stage}
-                    onChange={(e) => setStage(e.target.value)}
-                    className="w-full h-10 rounded-md border px-3"
-                  >
-                    <option value="">Startup Stage</option>
-                    <option value="Idea">Idea</option>
-                    <option value="MVP">MVP</option>
-                    <option value="Scaling">Scaling</option>
-                    <option value="Enterprise">Enterprise</option>
-                  </select>
+                    onChange={setStage}
+                    placeholder="Startup Stage"
+                    options={[
+                      { value: "Idea", label: "Idea", icon: <Lightbulb size={15} /> },
+                      { value: "MVP", label: "MVP", icon: <Rocket size={15} /> },
+                      { value: "Scaling", label: "Scaling", icon: <TrendingUp size={15} /> },
+                      { value: "Enterprise", label: "Enterprise", icon: <Building2 size={15} /> },
+                    ]}
+                  />
 
-                  <select
+                  {/* ✅ Depth Dropdown */}
+                  <CustomSelect
                     value={depth}
-                    onChange={(e) => setDepth(e.target.value)}
-                    className="w-full h-10 rounded-md border px-3"
-                  >
-                    <option value="short">Short Pitch (30 sec)</option>
-                    <option value="medium">Investor Pitch</option>
-                    <option value="deep">Full Business Plan</option>
-                  </select>
+                    onChange={setDepth}
+                    placeholder="Pitch Depth"
+                    options={[
+                      { value: "short", label: "Short Pitch (30 sec)", icon: <Zap size={15} /> },
+                      { value: "medium", label: "Investor Pitch", icon: <BarChart2 size={15} /> },
+                      { value: "deep", label: "Full Business Plan", icon: <ClipboardList size={15} /> },
+                    ]}
+                  />
 
+                  {/* ✅ Generate Button */}
                   <button
                     disabled={!isValidInput(input) || !category}
                     onClick={sent}
-                    className={`w-full h-12 rounded-md text-white ${
-                      !isValidInput(input) || !category
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-gradient-to-r from-primary to-secondary"
-                    }`}
+                    className={`w-full h-12 rounded-md text-white font-medium transition-all duration-200
+                      ${!isValidInput(input) || !category
+                        ? "bg-muted text-muted-foreground cursor-not-allowed"
+                        : "bg-gradient-to-r from-primary to-secondary hover:opacity-90 hover:scale-[1.01] active:scale-[0.99] shadow-md"
+                      }`}
                   >
                     Generate Pitch
                   </button>
+
                 </div>
               </div>
             </div>
 
-            <div className="rounded-lg border bg-card hover:shadow-lg overflow-auto selector flex flex-col ">
+            {/* Right Panel - Output */}
+            <div className="rounded-lg border bg-card hover:shadow-lg overflow-auto selector flex flex-col">
               {loader ? (
                 <section className="loader-slider">
                   <div className="slider"></div>
@@ -260,6 +344,7 @@ Future Vision:
             </div>
           </div>
 
+          {/* Bottom Cards */}
           <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="p-4 rounded-lg border border-border bg-card hover:shadow-md transition-shadow cursor-pointer">
               <div className="flex items-start gap-3">
@@ -277,9 +362,7 @@ Future Vision:
               <div className="flex items-start gap-3">
                 <Sparkles className="w-5 h-5 text-secondary mt-1" />
                 <div>
-                  <h3 className="font-semibold text-sm mb-1">
-                    Refine Existing
-                  </h3>
+                  <h3 className="font-semibold text-sm mb-1">Refine Existing</h3>
                   <p className="text-xs text-muted-foreground">
                     "Improve my value proposition"
                   </p>
@@ -296,9 +379,10 @@ Future Vision:
                     "Review my pitch deck structure"
                   </p>
                 </div>
-              </div>
+          </div>
             </div>
           </div>
+
         </div>
       </div>
     </div>
