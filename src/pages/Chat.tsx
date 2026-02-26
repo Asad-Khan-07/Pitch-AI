@@ -249,7 +249,7 @@ Future Vision:
           </div>
 
           <div className="grid h-[700px] md:h-[500px] grid-cols-1 md:grid-cols-2 gap-5 justify-between">
-            {/* ✅ Left Panel - Input */}
+     
             <div className="h-[400px] flex flex-col rounded-lg border border-border bg-card">
               <div className="p-4 border-t border-border">
                 <div className="grid grid-cols-1 gap-3">
@@ -264,7 +264,7 @@ Future Vision:
                                hover:border-primary/60 transition-all duration-200"
                   />
 
-                  {/* ✅ Category Dropdown */}
+     
                   <CustomSelect
                     value={category}
                     onChange={setCategory}
@@ -279,7 +279,7 @@ Future Vision:
                     ]}
                   />
 
-                  {/* ✅ Stage Dropdown */}
+     
                   <CustomSelect
                     value={stage}
                     onChange={setStage}
@@ -292,7 +292,7 @@ Future Vision:
                     ]}
                   />
 
-                  {/* ✅ Depth Dropdown */}
+     
                   <CustomSelect
                     value={depth}
                     onChange={setDepth}
@@ -304,7 +304,7 @@ Future Vision:
                     ]}
                   />
 
-                  {/* ✅ Generate Button */}
+
                   <button
                     disabled={!isValidInput(input) || !category}
                     onClick={sent}
@@ -321,7 +321,7 @@ Future Vision:
               </div>
             </div>
 
-            {/* Right Panel - Output */}
+
             <div className="rounded-lg border bg-card hover:shadow-lg overflow-auto selector flex flex-col">
               {loader ? (
                 <section className="loader-slider">
